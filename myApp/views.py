@@ -4,6 +4,67 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from myApp.models import Grades, Students
+import json
+
+
+def attribles(request):
+    print(request.path)
+    print(request.method)
+    print(request.encoding)
+    print(request.GET)
+    print(request.POST)
+    print(request.FILES)
+    print(request.COOKIES)
+    print(request.session)
+    return HttpResponse('attr')
+
+
+# 访问/get1?a=1&b=2&c=3
+
+
+def get1(request):
+    a = request.GET.get('a')
+    b = request.GET.get('b')
+    c = request.GET['c']
+    return HttpResponse(a + ' ' + b + ' ' + c)
+
+
+# 访问/get1?a=1&b=2&c=3&a=4
+def get2(request):
+    a = request.GET.getlist('a')
+    b = request.GET.get('b')
+    c = request.GET['c']
+    return HttpResponse(a[0] + '' + a[1] + ' ' + b + ' ' + c)
+
+
+def showResponse(request):
+    res = HttpResponse()
+    print(res.content)
+    res.content = b'good'
+    print(res.charset)
+    print(res.status_code)
+    print(res['content-type'])
+    return res
+
+def cookie(request):
+    res = HttpResponse()
+    c = request.COOKIES
+    print(c)
+    cookie = res.set_cookie("x","y")
+    return res
+
+
+
+# 表单提交和body传参
+def post1(request):
+    # 表单提交提取
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+    print(username, password)
+    # body提交提取
+    print(json.loads(request.body))
+
+    return HttpResponse('x')
 
 
 def index(request):
