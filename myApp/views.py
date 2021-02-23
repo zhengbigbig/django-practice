@@ -46,13 +46,13 @@ def showResponse(request):
     print(res['content-type'])
     return res
 
+
 def cookie(request):
     res = HttpResponse()
     c = request.COOKIES
     print(c)
-    cookie = res.set_cookie("x","y")
+    cookie = res.set_cookie("x", "y")
     return res
-
 
 
 # 表单提交和body传参
@@ -109,3 +109,15 @@ def createStudent2(request):
     stu = Students.stuObj.createStudent('x', 12, True, 'xxx', grade, '2021-02-22', False)
     stu.save()
     return HttpResponse("successful2")
+
+
+# 重定向
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+
+def redirect1(request):
+    # return HttpResponseRedirect('/redirect2')
+    return redirect('/redirect2')
+
+def redirect2(request):
+    return HttpResponse("重定向后")

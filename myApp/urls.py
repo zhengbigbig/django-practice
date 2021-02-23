@@ -14,4 +14,6 @@ urlpatterns = [
     re_path(r'^post1/', views.post1),
     re_path(r'^showResponse/', views.showResponse),
     re_path(r'^cookie/', views.cookie),
+    re_path(r'^redirect1/', views.redirect1),
+    re_path(r'^redirect2/', views.redirect2),
 ]
