@@ -115,9 +115,42 @@ def createStudent2(request):
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 
+
 def redirect1(request):
     # return HttpResponseRedirect('/redirect2')
     return redirect('/redirect2')
 
+
 def redirect2(request):
     return HttpResponse("重定向后")
+
+
+def main(request):
+    # 取session
+    username = request.session.get('username', '游客')
+    print(username)
+    return render(request, 'myApp/main.html', {'username': username})
+
+
+def login(request):
+    return render(request, 'myApp/login.html')
+
+
+def userLogin(request):
+    print('xxxx')
+    username = request.POST.get('username')
+    # 存储session
+    request.session['username'] = username
+    print(username)
+    return redirect('/main')
+
+
+from django.contrib.auth import logout
+
+
+def quit(request):
+    # 清楚session
+    # logout(request)
+    # request.session.clear()
+    request.session.flush()
+    return redirect('/main')
