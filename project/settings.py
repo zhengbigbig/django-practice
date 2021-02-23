@@ -118,9 +118,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# SESSION_ENGINE = 'redis_sessions.session'
-# SESSION_REDIS_HOST = 'localhost'
-# SESSION_REDIS_PORT = 6379
-# SESSION_REDIS_DB = 0
-# SESSION_REDIS_PASSWORD = ''
-# SESSION_REDIS_PREFIX = 'session'
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS = {
+    'host': 'localhost',
+    'port': 6379,
+    'db': 0,
+    'password': '',
+    'prefix': 'session',
+    'socket_timeout': 1
+}
