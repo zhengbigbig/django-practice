@@ -21,4 +21,8 @@ urlpatterns = [
     re_path(r'^login/$', views.login),
     re_path(r'^user/login/$', views.userLogin),
     re_path(r'^logout$', views.quit),
+
+    re_path(r'^verifycode/$', views.verifycode),
+    re_path(r'^verifycodehtml/$', views.verifycodehtml),
+    re_path(r'^verifycodecheck/$', views.verifycodecheck),
 ]
