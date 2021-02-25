@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'myApp'
+    'myApp',
+    'tinymce'
 ]
 
 MIDDLEWARE = [
@@ -134,4 +135,14 @@ SESSION_REDIS = {
     'password': '',
     'prefix': 'session',
     'socket_timeout': 1
+}
+
+# 上传文件目录
+MEDIA_ROOT = os.path.join(BASE_DIR, r'static/upfile')
+
+# 富文本
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'silver',
+    'width': 600,
+    'height': 400
 }

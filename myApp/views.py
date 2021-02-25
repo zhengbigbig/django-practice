@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render
 
 # Create your views here.
@@ -223,3 +225,51 @@ def verifycodecheck(request):
     else:
         request.session['flag'] = False
         return redirect('/verifycodehtml')
+
+
+def upload(request):
+    return render(request, 'myApp/upload.html')
+
+
+from django.conf import settings
+
+
+def savefile(request):
+    if request.method == 'POST':
+        f = request.FILES['file']
+        print(f)
+        filePath = os.path.join(settings.MEDIA_ROOT, f.name)
+        with open(filePath, 'wb') as fp:
+            for info in f.chunks():
+                fp.write(info)
+        return HttpResponse('上传成功')
+    else:
+        return HttpResponse("上传失败")
+
+
+from .models import Students
+from django.http import JsonResponse
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core import serializers
+import json
+
+def studentpage(request):
+    allList = Students.stuObj.all()
+    page = request.GET.get('current', 1)
+    pageSize = request.GET.get('pageSize', 10)
+    try:
+
+        paginator = Paginator(allList, pageSize)
+        count = paginator.count
+        currentPageList = paginator.page(page)
+    except PageNotAnInteger:
+        currentPageList = paginator.page(1)
+    except EmptyPage:
+        currentPageList = paginator.page(paginator.num_pages)
+
+    resultList = serializers.serialize("json", currentPageList)
+    # return render(request,'myApp/studentsList.html',{'students':currentPageList})
+    # return HttpResponse(
+    #     json.dumps({'total': count, 'list': resultList}),
+    #     content_type='application/json;charset=utf-8')
+    return JsonResponse({'total': count, 'list': resultList})

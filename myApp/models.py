@@ -62,3 +62,10 @@ class Students(models.Model):
     class Meta:
         db_table = "students"
         ordering = ['-id']
+
+
+from tinymce.models import HTMLField
+
+
+class Text(models.Model):
+    str = HTMLField()

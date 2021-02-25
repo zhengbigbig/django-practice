@@ -25,4 +25,8 @@ urlpatterns = [
     re_path(r'^verifycode/$', views.verifycode),
     re_path(r'^verifycodehtml/$', views.verifycodehtml),
     re_path(r'^verifycodecheck/$', views.verifycodecheck),
+    re_path(r'^upload/$', views.upload),
+    re_path(r'^savefile/$', views.savefile),
+
+    re_path(r'^studentpage/$',views.studentpage)
 ]
