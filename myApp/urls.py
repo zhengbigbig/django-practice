@@ -1,5 +1,4 @@
-from django.urls import re_path
-
+from django.urls import re_path,include
 from . import views
 
 urlpatterns = [
@@ -28,5 +27,7 @@ urlpatterns = [
     re_path(r'^upload/$', views.upload),
     re_path(r'^savefile/$', views.savefile),
 
-    re_path(r'^studentpage/$',views.studentpage)
+    re_path(r'^studentpage/$',views.studentpage),
+    re_path(r'^editor/$',views.editor),
+
 ]

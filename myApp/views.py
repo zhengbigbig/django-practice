@@ -253,6 +253,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core import serializers
 import json
 
+
 def studentpage(request):
     allList = Students.stuObj.all()
     page = request.GET.get('current', 1)
@@ -273,3 +274,7 @@ def studentpage(request):
     #     json.dumps({'total': count, 'list': resultList}),
     #     content_type='application/json;charset=utf-8')
     return JsonResponse({'total': count, 'list': resultList})
+
+
+def editor(request):
+    return render(request, 'myApp/tinymce.html')  # templates目录下创建一个tinymce.htmml

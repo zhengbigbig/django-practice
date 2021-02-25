@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>富文本</title>
+    <script type="text/javascript" src="/static/tiny_mce/tiny_mce.js"></script>
+    <script type="text/javascript">
+        tinyMCE.init({
+            'mode': 'textareas',   <!--定义textarea标签。否则在下面使用textarea标签 不会变为富文本-->
+            'theme': 'advanced',   <!--主题：高级-->
+            'width': 450,		 <!--宽、高-->
+            'height': 300
+        })
+    </script>
+</head>
+<body>
+<h1>下面就是富文本框</h1>
+<form action="">
+    <label>
+        <textarea name="comment_content">富文本</textarea>   <!--使用上面定义的textarea标签-->
+    </label>
+    <br>
+    <input type="submit" value="提交评论" class="btn btn-default">
+</form>
+</body>
+</html>

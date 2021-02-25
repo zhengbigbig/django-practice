@@ -69,3 +69,12 @@ from tinymce.models import HTMLField
 
 class Text(models.Model):
     str = HTMLField()
+
+
+class BlogsPost(models.Model):
+    title = models.CharField(max_length=150)
+    # body = models.TextField()
+    body = HTMLField()  # 注册
+    timestamp = models.DateTimeField()
+    auth = models.TextField(default='鲁迅')
+    address = models.CharField(max_length=100, default='北京')
