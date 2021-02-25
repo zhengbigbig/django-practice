@@ -163,14 +163,21 @@ TINYMCE_DEFAULT_CONFIG = {
     'external_image_list_url': "lists/image_list.js",
     'media_external_list_url': "lists/media_list.js",
 
-# // Style formats
+    # // Style formats
     'style_formats': [
-    {'title': 'Bold text', 'inline': 'strong'},
-    {'title': 'Red text', 'inline': 'span', 'styles': {'color': '#ff0000'}},
-    {'title': 'Help', 'inline': 'strong', 'classes': 'help'},
-    {'title': 'Table styles'},
-    {'title': 'Table row 1', 'selector': 'tr', 'classes': 'tablerow'}
+        {'title': 'Bold text', 'inline': 'strong'},
+        {'title': 'Red text', 'inline': 'span', 'styles': {'color': '#ff0000'}},
+        {'title': 'Help', 'inline': 'strong', 'classes': 'help'},
+        {'title': 'Table styles'},
+        {'title': 'Table row 1', 'selector': 'tr', 'classes': 'tablerow'}
     ],
     'width': '700',
     'height': '400'
 }
+
+# celery
+import djcelery
+
+djcelery.setup_loader()  # 初始化
+BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_IMPORTS = ('myApp.task')
