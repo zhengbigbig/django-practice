@@ -1,280 +1,138 @@
 import os
+from datetime import datetime
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.urls import reverse
 
-from myApp.models import Grades, Students
+
+def home(request):
+    return HttpResponse('hello world')
+
+
+def show(request, age):
+    print(type(age))
+    return HttpResponse(str(age))
+
+
+def list_user(request, name):
+    print(type(name))
+    return HttpResponse(name)
+
+
+def access(request, path):
+    return HttpResponse(path)
+
+
+def get_phone(request, tel):
+    return HttpResponse(str(tel))
+
+
+def get_tel(request, tel):
+    return HttpResponse(str(tel))
+
+
+def change_name(request, name):
+    return HttpResponse(name)
+
+
+def request(request):
+    # get传参获取
+    print(request.GET)
+    # 获取单一值
+    print(request.GET.get('username'))
+    # 获取一个返回值列表
+    print(request.GET.getlist('age'))
+
+    # post
+    print(request.POST.get('username'))
+    print(request.POST.getlist('age'))
+    print(request.body.decode())
+
+    # 获取请求方法
+    print(request.method)
+    # 获取请求路径
+    print(request.path)
+    print(request.get_full_path())
+    print(request.get_host())
+    print(request.get_raw_uri())
+    print(request.build_absolute_uri())
+    print(request.get_full_path_info())
+    # 判断是否是ajax
+    print(request.is_ajax())
+    # 其他属性
+    # print(request.META)
+    # 客户端地址
+    print(request.META.get('REMOTE_ADDR'))
+    # 来源页面
+    print(request.META.get('HTTP_REFERER'))
+    # 获取请求参数的字典
+    print(request.GET.dict())
+
+    return HttpResponse('test')
+
+
+def good(req):
+    # res = HttpResponse()
+    # res.content = b'good'
+    # res.charset = 'utf-8'
+    # res.content_type = 'text/html'
+    # res.status_code = 200
+    # return res
+    return HttpResponse(b'good', status=400, charset='utf-8', content_type='text/html')
+
+
+def handle(req, data):
+    return render(request, 'myApp/index.html', {'data': data})
+
+
 import json
 
 
-def attribles(request):
-    print(request.path)
-    print(request.method)
-    print(request.encoding)
-    print(request.GET)
-    print(request.POST)
-    print(request.FILES)
-    print(request.COOKIES)
-    print(request.session)
-    return HttpResponse('attr')
-
-
-# 访问/get1?a=1&b=2&c=3
-
-
-def get1(request):
-    a = request.GET.get('a')
-    b = request.GET.get('b')
-    c = request.GET['c']
-    return HttpResponse(a + ' ' + b + ' ' + c)
-
-
-# 访问/get1?a=1&b=2&c=3&a=4
-def get2(request):
-    a = request.GET.getlist('a')
-    b = request.GET.get('b')
-    c = request.GET['c']
-    return HttpResponse(a[0] + '' + a[1] + ' ' + b + ' ' + c)
-
-
-def showResponse(request):
-    res = HttpResponse()
-    print(res.content)
-    res.content = b'good'
-    print(res.charset)
-    print(res.status_code)
-    print(res['content-type'])
-    return res
-
-
-def cookie(request):
-    res = HttpResponse()
-    c = request.COOKIES
-    print(c)
-    cookie = res.set_cookie("x", "y")
-    return res
-
-
-# 表单提交和body传参
-def post1(request):
-    # 表单提交提取
-    username = request.POST.get("username")
-    password = request.POST.get("password")
-    print(username, password)
-    # body提交提取
-    print(json.loads(request.body))
-
-    return HttpResponse('x')
-
-
-def index(request):
-    return HttpResponse("hello world")
-
-
-def details(request, num):
-    return HttpResponse("detail-%s" % num)
-
-
-def grades(request):
-    # 去模板取数据
-    gradesList = Grades.objects.all()
-    # 将数据传递给模板，模板再渲染页面，将渲染好的页面返回给浏览器
-    return render(request, 'myApp/grades.html', {"grades": gradesList})
-
-
-# 分页
-def students(request, page):
-    # 去模板取数据
-    page = int(page)
-    studentsList = Students.stuObj.all()[(page - 1) * 5:page * 5]
-    # 将数据传递给模板，模板再渲染页面，将渲染好的页面返回给浏览器
-    return render(request, 'myApp/students.html', {"students": studentsList})
-
-
-def gradeStudents(request, num):
-    grade = Grades.objects.get(pk=num)
-    studentsList = grade.students_set.all()
-    return render(request, 'myApp/students.html', {"students": studentsList})
-
-
-def createStudent(request):
-    grade = Grades.objects.get(pk=1)
-    stu = Students.createStudent('x', 12, True, 'xxx', grade, '2021-02-22', False)
-    stu.save()
-    return HttpResponse("successful")
-
-
-def createStudent2(request):
-    grade = Grades.objects.get(pk=1)
-    stu = Students.stuObj.createStudent('x', 12, True, 'xxx', grade, '2021-02-22', False)
-    stu.save()
-    return HttpResponse("successful2")
+def handle2(req):
+    # 直接返回字典
+    # return JsonResponse({'name': 'xxx'})
+    # return JsonResponse(json.dumps({'name': 'xxx'})) 等同于上面
+    # 返回非字典
+    return JsonResponse([1, 2, 3, 4, 5], safe=False)
 
 
 # 重定向
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
-
-
-def redirect1(request):
-    # return HttpResponseRedirect('/redirect2')
-    return redirect('/redirect2')
-
-
-def redirect2(request):
-    return HttpResponse("重定向后")
-
-
-def main(request):
-    # 取session
-    username = request.session.get('username', '游客')
-    print(username)
-    return render(request, 'myApp/main.html', {'username': username})
-
-
-def login(request):
-    return render(request, 'myApp/login.html')
-
-
-def userLogin(request):
-    print('xxxx')
-    username = request.POST.get('username')
-    # 存储session
-    request.session['username'] = username
-    print(username)
+def handle_redirect(request):
+    # return HttpResponseRedirect('/main')
     return redirect('/main')
 
 
-from django.contrib.auth import logout
+# 带参数重定向
+def handle_redirect2(req):
+    return redirect("/home/{}/{}/".format('xxx', 30))
 
 
-def quit(request):
-    # 清楚session
-    # logout(request)
-    # request.session.clear()
-    request.session.flush()
-    return redirect('/main')
+# 应用内跳转和应用外跳转
+def handle_redirect3(req):
+    # 应用内跳转可以不写http://127.0.0.1:8000
+    # return redirect("/home")
+    # 应用外跳转
+    return redirect("https://www.baidu.com")
 
 
-def verifycode(request):
-    # 引入绘图模块
-    from PIL import Image, ImageDraw, ImageFont
-    # 引入随机函数模块
-    import random
-    # 定义变量，用于画面的背景色、宽、高
-    bgcolor = (random.randrange(20, 100), random.randrange(20, 100), random.randrange(20, 100))
-    width = 100
-    height = 50
-    # 创建画面对象
-    im = Image.new('RGB', (width, height), bgcolor)
-    # 创建画笔对象
-    draw = ImageDraw.Draw(im)
-
-    # 调用画笔的point()函数绘制噪点
-    for i in range(0, 100):
-        xy = (random.randrange(0, width), random.randrange(0, height))
-        fill = (random.randrange(0, 255), 255, random.randrange(0, 255))
-        draw.point(xy, fill=fill)
-    # 定义验证码的备选值
-
-    str = '1234567890QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
-    # 随机选取4个值作为验证码
-    rand_str = ''
-    for i in range(0, 4):
-        rand_str += str[random.randrange(0, len(str))]
-    # 构造字体对象
-    font = ImageFont.truetype(r'/Users/zhengzhiheng/Library/Fonts/华文行楷.ttf', 40)
-    # 构造字体颜色
-    fontcolor = (255, random.randrange(0, 255), random.randrange(0, 255))
-    # 绘制4个字
-
-    draw.text((5, 2), rand_str[0], font=font, fill=fontcolor)
-    draw.text((25, 2), rand_str[1], font=font, fill=fontcolor)
-    draw.text((50, 2), rand_str[2], font=font, fill=fontcolor)
-    draw.text((75, 2), rand_str[3], font=font, fill=fontcolor)
-    # 释放画笔
-    del draw
-    # 存入session，用于做进一步验证
-    request.session['verifycode'] = rand_str
-    # 内存文件操作
-    import io
-    buf = io.BytesIO()
-    # 将图片保存在内存中，文件类型为png
-    im.save(buf, 'png')
-    # 将内存中的图片数据返回给客户端，MIME类型为图片png
-    return HttpResponse(buf.getvalue(), 'image/png')
+# 反向定位：由应用命名空间:name来确定路由
+# 正向：路由->视图函数 反向：由名称来确定路由
+def handle_redirect4(req):
+    # return redirect(reverse("myApp:home"))  # 不带参数
+    return redirect(reverse('myApp:list', kwargs={'name': 'admin'}))
+    # return redirect(reverse('myApp:list', args=('xxx')))
 
 
-def verifycodehtml(request):
-    f = request.session.get('flag', True)
-    str = ''
-    if f == False:
-        str = '请重新输入'
-    request.session.clear()
-    return render(request, 'myApp/verifycode.html', {"flag": str})
+from django.template import loader
 
 
-def verifycodecheck(request):
-    code1 = str(request.POST.get("verifycode")).upper()
-    code2 = str(request.session['verifycode']).upper()
-    print(code1, code2)
-    if code1 == code2:
-        return redirect('/main')
-    else:
-        request.session['flag'] = False
-        return redirect('/verifycodehtml')
-
-
-def upload(request):
-    return render(request, 'myApp/upload.html')
-
-
-from django.conf import settings
-
-
-def savefile(request):
-    if request.method == 'POST':
-        f = request.FILES['file']
-        print(f)
-        filePath = os.path.join(settings.MEDIA_ROOT, f.name)
-        with open(filePath, 'wb') as fp:
-            for info in f.chunks():
-                fp.write(info)
-        return HttpResponse('上传成功')
-    else:
-        return HttpResponse("上传失败")
-
-
-from .models import Students
-from django.http import JsonResponse
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.core import serializers
-import json
-
-
-def studentpage(request):
-    allList = Students.stuObj.all()
-    page = request.GET.get('current', 1)
-    pageSize = request.GET.get('pageSize', 10)
-    try:
-
-        paginator = Paginator(allList, pageSize)
-        count = paginator.count
-        currentPageList = paginator.page(page)
-    except PageNotAnInteger:
-        currentPageList = paginator.page(1)
-    except EmptyPage:
-        currentPageList = paginator.page(paginator.num_pages)
-
-    resultList = serializers.serialize("json", currentPageList)
-    # return render(request,'myApp/studentsList.html',{'students':currentPageList})
-    # return HttpResponse(
-    #     json.dumps({'total': count, 'list': resultList}),
-    #     content_type='application/json;charset=utf-8')
-    return JsonResponse({'total': count, 'list': resultList})
-
-
-def editor(request):
-    return render(request, 'myApp/tinymce.html')  # templates目录下创建一个tinymce.htmml
+def index(request):
+    temp = loader.get_template('myApp/index.html')
+    # 渲染模板，生成Html源码
+    print(datetime.now())
+    res = temp.render(context={'time': datetime.now()})
+    # print(res)
+    return HttpResponse(res)

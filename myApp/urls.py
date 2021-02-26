@@ -1,33 +1,27 @@
-from django.urls import re_path,include
+from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
-    re_path(r'^$', views.index, name='index'),
-    re_path(r'^(\d+)$', views.details),
-    re_path(r'^grades/$', views.grades),
-    re_path(r'^students/(\d+)/$', views.students),
-    re_path(r'^grades/(\d+)/$', views.gradeStudents),
-    re_path(r'^addstudent/$', views.createStudent),
-    re_path(r'^addstudent2/$', views.createStudent2),
-    re_path(r'^attribles', views.attribles),
-    re_path(r'^post1/', views.post1),
-    re_path(r'^showResponse/', views.showResponse),
-    re_path(r'^cookie/', views.cookie),
-    re_path(r'^redirect1/', views.redirect1),
-    re_path(r'^redirect2/', views.redirect2),
+    # 不能以/ 开头
+    # 参数：路由匹配 视图函数 路由名称
+    path('', views.home, name='home'),
+    path('index/', views.index, name='index'),
+    # string
+    path('change/<name>/',views.change_name,name='change'),
+    # int
+    path('show/<int:age>/', views.show, name='show'),
+    # slug
+    path('list/<slug:name>/', views.list_user, name='list'),
+    # path，如果有多个参数，path类型必须在最后一个
+    path('access/<path:path>/', views.access, name='access'),
+    re_path(r'^tel/(1[3-9]\d{9})/$', views.get_phone, name='phone'),
+    re_path(r'^tel/(?P<tel>1[3-9]\d{9})/$', views.get_tel, name='tel'),
+    re_path(r'^request/$', views.request, name='request'),
+    re_path(r'^good/$', views.good, name='good'),
+    re_path(r'^handle2/$', views.handle2, name='handle2'),
 
-    re_path(r'^main/$', views.main, name='main'),
-    re_path(r'^login/$', views.login),
-    re_path(r'^user/login/$', views.userLogin),
-    re_path(r'^logout$', views.quit),
-
-    re_path(r'^verifycode/$', views.verifycode),
-    re_path(r'^verifycodehtml/$', views.verifycodehtml),
-    re_path(r'^verifycodecheck/$', views.verifycodecheck),
-    re_path(r'^upload/$', views.upload),
-    re_path(r'^savefile/$', views.savefile),
-
-    re_path(r'^studentpage/$',views.studentpage),
-    re_path(r'^editor/$',views.editor),
+    re_path(r'^red/$', views.handle_redirect, name='handle_redirect'),
+    re_path(r'^blue/$', views.handle_redirect2, name='handle_redirect2'),
+    re_path(r'^green/$', views.handle_redirect4, name='handle_redirect4'),
 
 ]
