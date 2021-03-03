@@ -134,3 +134,5 @@ import djcelery
 djcelery.setup_loader()  # 初始化
 BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_IMPORTS = ('myApp.task')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

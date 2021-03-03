@@ -24,4 +24,23 @@ urlpatterns = [
     re_path(r'^blue/$', views.handle_redirect2, name='handle_redirect2'),
     re_path(r'^green/$', views.handle_redirect4, name='handle_redirect4'),
 
+    re_path(r'^user/$', views.handle_data, name='handle_data'),
+    re_path(r'^filter/$', views.filter, name='filter'),
+    re_path(r'^not_filter/$', views.not_filter, name='not_filter'),
+    re_path(r'^count_statics/$', views.count_statics, name='count_statics'),
+    re_path(r'^raw_sql/$', views.raw_sql, name='raw_sql'),
+    re_path(r'^custom_sql/$', views.custom_sql, name='custom_sql'),
+    re_path(r'^manage_user/$', views.manage_user, name='manage_user'),
+
+    re_path(r'^addstudent/$', views.addstudent, name='addstudent'),
+    re_path(r'^addarchives/$', views.addarchives, name='addarchives'),
+    re_path(r'^deletestudent/$', views.deletestudent, name='deletestudent'),
+    re_path(r'^findstudent/$', views.findstudent, name='findstudent'),
+    re_path(r'^findarchives/$', views.findarchives, name='findarchives'),
+    re_path(r'^lookup/$', views.lookup, name='lookup'),
+    re_path(r'^books/$', views.books, name='books'),
+
+    re_path(r'^testBuyerAndGoods/$', views.testBuyerAndGoods, name='testBuyerAndGoods'),
+
+
 ]

@@ -3,78 +3,85 @@ from django.db import models
 
 # Create your models here.
 
-class Grades(models.Model):
-    gName = models.CharField(max_length=20)
-    gDate = models.DateTimeField()
-    gGirlNum = models.IntegerField()
-    gBoyNum = models.IntegerField()
-    isDelete = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.gName
+class BaseModel(models.Model):
+    createTime = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = "grades"
+        abstract = True  # 不生成表
 
 
-class StudentsManager(models.Manager):
+class UserManager(models.Manager):
     def get_queryset(self):
-        return super(StudentsManager, self).get_queryset() \
-            .filter(isDelete=False)
-
-    def createStudent(self, name, age, gender, content, grade, lastTime, isDelete=False):
-        stu = self.model()
-        stu.sName = name
-        stu.sAge = age
-        stu.sGender = gender
-        stu.sContEnd = content
-        stu.sGrade = grade
-        stu.lastTime = lastTime
-        return stu
+        return super().get_queryset().filter(password__isnull=False)
 
 
-class Students(models.Model):
-    # 定义一个类方法创建对象
+class User(BaseModel):
+    userManager = UserManager()
+    # 字段名：不能是Python的关键字，不能使用连续的下划线
+    # db_column: 数据表中的字段名称
+    id = models.AutoField(primary_key=True, db_column='id')
+    # CharField类型必须指明长度max_length
+    username = models.CharField(max_length=30, unique=True)
+    password = models.CharField(max_length=128)
+
+    class Meta:  # 元数据
+        db_table = 'users'
+        ordering = ['username']
+
+    # def __str__(self):
+    #     return self.username
+
     @classmethod
-    def createStudent(cls, name, age, gender, content, grade, lastTime, isDelete=False):
-        stu = cls(sName=name, sAge=age, sGender=gender, sContEnd=content, lastTime=lastTime, isDelete=isDelete,
-                  sGrade=grade)
-        return stu
+    def after(cls, date):
+        return cls.objects.filter(createTime__gt=date)
 
-    # 自定义模型管理器
-    # 当自定义模型管理器，objects就不存在了
-    stuObj = models.Manager()
-    stuObj2 = StudentsManager()
 
-    sName = models.CharField(max_length=20)
-    sGender = models.BooleanField(default=True)
-    sAge = models.IntegerField()
-    sContEnd = models.CharField(max_length=20)
-    isDelete = models.BooleanField(default=False)
-    # 关联外键
-    sGrade = models.ForeignKey("Grades", on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.sName
-
-    lastTime = models.DateTimeField(auto_now=True)
+class Publisher(models.Model):
+    pname = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        db_table = "students"
-        ordering = ['-id']
+        db_table = 'publisher'
 
 
-from tinymce.models import HTMLField
+class Book(models.Model):
+    bname = models.CharField(max_length=200, blank=True, null=True)
+    # ForeignKey 参数：参照的模型名
+    # 多对一模型通过ForeignKey表示多对一
+    # 如果Publisher定义在book之后，第一个参数应该用字符串'Publisher'
+    publisher = models.ForeignKey('Publisher', on_delete=models.DO_NOTHING,
+                                  db_column='pid',  # 表中字段名
+                                  related_name='books'  # 通过出版社查图书时使用的关系名
+                                  , null=True)
+
+    class Meta:
+        db_table = 'book'
 
 
-class Text(models.Model):
-    str = HTMLField()
+class Buyer(models.Model):
+    bname = models.CharField(max_length=30)
+    level = models.IntegerField(default=1)
+
+    class Meta:
+        db_table = 'buyer'
 
 
-class BlogsPost(models.Model):
-    title = models.CharField(max_length=150)
-    # body = models.TextField()
-    body = HTMLField()  # 注册
-    timestamp = models.DateTimeField()
-    auth = models.TextField(default='鲁迅')
-    address = models.CharField(max_length=100, default='北京')
+class Goods(models.Model):
+    gname = models.CharField(max_length=100)
+    price = models.FloatField()
+    # buyer = models.ManyToManyField(Buyer)  # 这种写法会自动生成第三张表，但我们无法直接控制
+    buyer = models.ManyToManyField(Buyer, through='Orders')
+
+    def __str__(self):
+        return self.gname + "  " + str(self.price)
+
+    class Meta:
+        db_table = 'goods'
+
+# 手动创建中间表
+class Orders(models.Model):
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, db_column='bid')
+    goods = models.ForeignKey('Goods', on_delete=models.CASCADE, db_column='gid')
+    num = models.IntegerField(default=1)
+
+    class Meta:
+        db_table = 'orders'

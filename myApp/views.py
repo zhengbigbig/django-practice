@@ -1,11 +1,17 @@
 import os
+import random
 from datetime import datetime
 
+from django.core import serializers
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+
+from myApp.models import User, Publisher, Book, Goods, Buyer
+from myApp.models1 import Student, Archives
 
 
 def home(request):
@@ -136,3 +142,271 @@ def index(request):
     res = temp.render(context={'time': datetime.now()})
     # print(res)
     return HttpResponse(res)
+
+
+# 局部禁用csrf
+@csrf_exempt
+def handleAjax(request):
+    if request.is_ajax():
+        return JsonResponse({"code": 0, "msg": 'success'})
+    return render(request, 'myApp/ajax.html')
+
+
+from hashlib import md5
+
+
+def handle_data(request):
+    # 增加
+    # user = User(username='tom', password=md5(b'123').hexdigest())
+    # user.save()
+    # 便捷插入
+    # User.objects.create(username='tom1', password=md5(b'123').hexdigest())
+
+    # user = {'username':'xx','password':'asdasd'}
+    # User.objects.create(**user)
+    # 批量插入
+    User.objects.bulk_create([User(username='u111', password='p1'), User(username='u222', password='p1')])
+    # 修改
+    # user = User.objects.get(pk=1)
+    # user.password = '233'
+    # user.save()
+
+    # 删除
+    # try:
+    #     user = User.objects.get(id=1)
+    #     print(user, type(user))
+    #     if user:
+    #         user.delete()
+    # except Exception as e:
+    #     print(e)
+    # 删除多条
+    # users = User.objects.filter(id__gte=2)
+    # print(users)
+    # users.delete()
+
+    return HttpResponse('xxx')
+
+
+def filter(request):
+    # 查询结果集 QuerySet
+    # 1. all
+    # select * from user
+    allData = User.objects.all()
+    # print(allData)
+    # 2. first
+    # data = data.first()
+    # 3. filter
+    # select * from user where id >= 5
+    # data = data.filter(id__gte=5)
+    # 4. exclude
+    # data = allData.exclude(id__gte=25)
+    # data2 = allData.filter(id__lt=25) # 等价
+    # print(data,'-----',data2)
+    # 5. order_by
+    # data = allData.order_by('username')
+    # print(data)
+    # 6. 限制结果集 不支持负下标 从0 到 1
+    # data = allData.order_by('id')[:2] # <QuerySet [<User: User object (21)>, <User: User object (22)>]>
+    # 7. values
+    # 返回所有字段
+    # data = allData.values()
+    # print(data)
+    # 返回指定字段
+    data = allData[0:1].values('username', 'password')
+    print(data)  # <QuerySet [{'username': 'u1', 'password': 'p1'}]>
+    for user in data:
+        print(type(user), user)  # <class 'dict'> {'username': 'u1', 'password': 'p1'}
+    # 8. reverse() 反序
+    # data = allData.order_by('id')[:2].reverse()
+    # 9. distinct 去重
+    data2 = allData.values('password').distinct().order_by('password')[:10]
+    return HttpResponse('xxx')
+
+
+def not_filter(request):
+    # 非过滤器方法
+    # 1. get 只能返回一条记录，若记录不存在：DoesNotExist，若有多条：MultipleObjectsReturned
+    # user = User.objects.get(id__gt=1)
+    # 2. first last 返回一个模型对象，第一条和最后一条
+    first_user = User.objects.first()
+    last_user = User.objects.last()
+    print(first_user, last_user)
+    # 3. earliest 根据指定字段返回最早增加的记录
+    # 4. latest 根据field字段返回最近增加记录
+    # 5. exists 判断查询集是否有数据
+    flag = User.objects.all().exists()
+    print(flag)
+    # 6. count 返回查询集中对象的数目
+    count = User.objects.count()
+    print(count)
+    return HttpResponse('query')
+
+
+from django.db.models import Max, Min, Sum, Avg, Count, Q, F
+
+
+def count_statics(request):
+    # 聚合查询：对多行查询结果的一列进行操作
+    # select count(*) from user
+    User.objects.aggregate(Count('id'))
+    User.objects.aggregate(Max('id'))
+    User.objects.aggregate(Min('id'))
+    # 分组统计
+    # select type,count(*) from user group by password
+    res = User.objects.values('password').annotate(Count('id')).order_by('password')
+    print(res)
+    # 查看生成的sql语句
+    print(res.query)
+
+    # Q对象：构造逻辑或、逻辑非
+    data = User.objects.filter(Q(id__gt=30) | Q(username__icontains='张'))
+    data = User.objects.filter(~Q(sex=1))  # 不能处理null
+
+    # F对象：
+    data = User.objects.filter(username=F('password'))
+    return HttpResponse('x')
+
+
+# 原生sql语句使用
+def raw_sql(request):
+    # 多表联合查询
+    # data = User.objects.raw("select * from user,detail where user.id = detail.user_id")
+    # print(list(data))
+
+    # 防止sql注入
+    tmp = input('用户名:')
+    users = User.objects.raw("select * from users where username like %s", ['%' + tmp + '%'])
+    print(list(users), users)
+    print(users.query)
+    return HttpResponse(serializers.serialize('json', list(users)))
+
+
+from django.db import connection
+
+
+def custom_sql(request):
+    # with语句相当于cursor = connection.cursor() 和cursor.close()
+    # with connection.cursor() as cursor:
+    #     cursor.execute("select * from users")
+    #     row = cursor.fetchone()
+    #     print(row)
+    # 返回列表套字典
+    with connection.cursor() as cursor:
+        cursor.execute("select * from users")
+        columns = [col[0] for col in cursor.description]
+        print(cursor.fetchall())
+        res = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        print(res)
+    return HttpResponse('x')
+
+
+def manage_user(request):
+    data = User.userManager.all()
+    print(data)
+    return HttpResponse('x')
+
+
+# 一对一
+# 增加数据
+def addstudent(request):
+    Student.objects.create(sno="163212", sname='xxx', sage=14)
+    return HttpResponse('add student successful')
+
+
+def addarchives(request):
+    stu = Student.objects.get(pk='163212')
+    arc = Archives.objects.create(idcard='111111111111111111', student=stu)
+    return HttpResponse('增加档案')
+
+
+# 删除数据
+
+def deletestudent(request):
+    stu = Student.objects.get(pk='163212')
+    stu.delete()
+    return HttpResponse('删除成功')
+
+
+# 正向查询 通过学生获取学生档案
+def findstudent(request):
+    stu = Student.objects.first()
+    arc = stu.archives
+    print(arc)
+    return HttpResponse(arc)
+
+
+# 反向查询 通过档案获取学生
+def findarchives(request):
+    arc = Archives.objects.first()
+    stu = arc.student
+    print(stu)
+    return HttpResponse(stu)
+
+
+# 跨关系查询
+def lookup(request):
+    # 根据档案查学生
+    # student = Student.objects.get(archives__pk=2)
+    student = Student.objects.get(archives__idcard='111111111111111111')
+    print(student)
+    # 根据学生查档案
+    archives = Archives.objects.get(student__sno='163212')
+    return HttpResponse(archives)
+
+
+#
+def books(request):
+    # 创建一个出版社
+    # pub = Publisher(pname='清华出版社')
+    # pub.save()
+
+    # 创建出版社并创建图书
+    # pub = Publisher.objects.get(pk=2)
+    # pub.books.create(bname='韭菜的个人修养')
+    # books = Book.objects.filter(pk__lt=5)
+    # pub.books.bulk_create(list(books))
+
+    # 创建book
+    # book = Book(bname='草根谭')
+    # book.save()
+
+    # 创建book并关联
+    # pub = Publisher.objects.get(pk=1)
+    # 方式1
+    # book = Book.objects.create(bname='离骚2', publisher=pub)
+    # 方式2
+    # book = Book.objects.get(pk=2)
+    # book.publisher = pub
+
+    # 删除和更新
+    # pub = Publisher.objects.get(pk=1)
+    # pub.books.all().delete()  # 删除出版社出版的所有图书
+    # pub.books.all().update(bname='xxx')
+
+    # 查询 使用外键增删改查效率较低
+    pub = Publisher.objects.get(pk=2)
+    # pub.books 是一个查询管理器对象 objects
+    print(pub.books.all())
+
+    # 由图书查出版社
+    book = Book.objects.get(pk=5)
+    print(book.publisher.pname)
+
+    # 复杂查询
+    pub = Publisher.objects.filter(books__bname='韭菜的个人修养')
+    print(pub)
+    book = Book.objects.filter(publisher__isnull=True)
+    print(book)
+    return HttpResponse('success')
+
+
+def testBuyerAndGoods(request):
+    # good = Goods(gname='商品1',price=12.00)
+    # good.save()
+    # buyer = Buyer(bname='zzz', level=1)
+    # buyer.save()
+    # 购买商品
+    goods = Goods.objects.get(pk=random.randint(1, Goods.objects.count()))
+    goods.buyer.create(Buyer.objects.get(pk=random.randint(1,Buyer.objects.count())))
+    # goods.save()
+    return HttpResponse('success')
