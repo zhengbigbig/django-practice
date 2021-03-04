@@ -80,7 +80,8 @@ class Goods(models.Model):
 # 手动创建中间表
 class Orders(models.Model):
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, db_column='bid')
-    goods = models.ForeignKey('Goods', on_delete=models.CASCADE, db_column='gid')
+    # 若使用了related_name，则可以通过order.goods，若没有，可通过order.goods_set
+    goods = models.ForeignKey('Goods', on_delete=models.CASCADE, db_column='gid',related_name='goods')
     num = models.IntegerField(default=1)
 
     class Meta:

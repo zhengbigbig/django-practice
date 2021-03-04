@@ -10,7 +10,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from myApp.models import User, Publisher, Book, Goods, Buyer
+from myApp.models import User, Publisher, Book, Goods, Buyer, Orders
 from myApp.models1 import Student, Archives
 
 
@@ -407,6 +407,25 @@ def testBuyerAndGoods(request):
     # buyer.save()
     # 购买商品
     goods = Goods.objects.get(pk=random.randint(1, Goods.objects.count()))
-    goods.buyer.create(Buyer.objects.get(pk=random.randint(1,Buyer.objects.count())))
-    # goods.save()
+    goods.buyer.add(Buyer.objects.get(pk=random.randint(1, Buyer.objects.count())))
+    goods.save()
+    # 生成订单
+    # order = Orders(buyer=Buyer.objects.get(pk=random.randint(1, Buyer.objects.count())),
+    #                goods=Goods.objects.get(pk=random.randint(1, Goods.objects.count())),
+    #                num=3)
+    # order.save()
+    # 删除商品
+    # buyer = Buyer.objects.get(pk=1)
+    # buyer.goods_set.clear()  # 删除所有商品
+    # buyer.goods_set.remove(Goods.objects.get(pk=2)) # 删除用户Id=4订单中指定商品
+    # orders = Orders.objects.filter(buyer__pk=1, goods__id__lt=5)
+    # print(orders)
+    # orders.delete()
+    # 正向查询
+    # buyer = Buyer.objects.get(pk=13)
+    # goods = buyer.goods_set.all()
+    # 反向查询
+    good = Goods.objects.get(pk=3)
+    buyers = good.buyer.all()
+    print(buyers)
     return HttpResponse('success')
