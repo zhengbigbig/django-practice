@@ -3,6 +3,7 @@ import random
 from datetime import datetime
 
 from django.core import serializers
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -12,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from myApp.models import User, Publisher, Book, Goods, Buyer, Orders
 from myApp.models1 import Student, Archives
+from myApp.utils import CustomPaginator
 
 
 def home(request):
@@ -428,4 +430,16 @@ def testBuyerAndGoods(request):
     good = Goods.objects.get(pk=3)
     buyers = good.buyer.all()
     print(buyers)
+    return HttpResponse('success')
+
+
+def pagination(request):
+    page = request.GET.get('current', 1)
+    pageSize = request.GET.get('pageSize', 10)
+    allList = Goods.objects.all()
+    # paginator = Paginator(allList, pageSize)
+    # currentPageList = paginator.page(page)
+    # print(list(currentPageList.object_list))
+    currentPageList = CustomPaginator(allList, pageSize).lst(page)
+    print(currentPageList)
     return HttpResponse('success')

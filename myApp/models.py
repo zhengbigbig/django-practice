@@ -76,6 +76,7 @@ class Goods(models.Model):
 
     class Meta:
         db_table = 'goods'
+        ordering=['id']
 
 # 手动创建中间表
 class Orders(models.Model):

@@ -41,6 +41,7 @@ urlpatterns = [
     re_path(r'^books/$', views.books, name='books'),
 
     re_path(r'^testBuyerAndGoods/$', views.testBuyerAndGoods, name='testBuyerAndGoods'),
+    re_path(r'^pagination/$', views.pagination, name='pagination'),
 
 
 ]
