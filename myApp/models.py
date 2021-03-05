@@ -24,6 +24,7 @@ class User(BaseModel):
     # CharField类型必须指明长度max_length
     username = models.CharField(max_length=30, unique=True)
     password = models.CharField(max_length=128)
+    createTime = models.DateTimeField(auto_now_add=True)
 
     class Meta:  # 元数据
         db_table = 'users'
