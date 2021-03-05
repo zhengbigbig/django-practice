@@ -24,7 +24,7 @@ urlpatterns = [
     re_path(r'^blue/$', views.handle_redirect2, name='handle_redirect2'),
     re_path(r'^green/$', views.handle_redirect4, name='handle_redirect4'),
 
-    re_path(r'^user/$', views.handle_data, name='handle_data'),
+    # re_path(r'^user/$', views.handle_data, name='handle_data'),
     re_path(r'^filter/$', views.filter, name='filter'),
     re_path(r'^not_filter/$', views.not_filter, name='not_filter'),
     re_path(r'^count_statics/$', views.count_statics, name='count_statics'),

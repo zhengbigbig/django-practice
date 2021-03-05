@@ -16,6 +16,7 @@ class UserManager(models.Manager):
 
 
 class User(BaseModel):
+    objects = models.Manager()
     userManager = UserManager()
     # 字段名：不能是Python的关键字，不能使用连续的下划线
     # db_column: 数据表中的字段名称
