@@ -9,10 +9,6 @@ def validate_username_exist(value):
     if User.objects.filter(username=value).first():
         raise ValidationError('%s 用户名已存在' % value)
 
-
-import re
-
-
 class RegisterForm(forms.Form):
     username = forms.CharField(required=True, validators=[
         validate_username_exist,

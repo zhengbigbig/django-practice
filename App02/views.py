@@ -1,13 +1,18 @@
 from datetime import datetime, timedelta
 import hashlib
 
+from dateutil import tz
+from django.contrib import auth
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from App02.forms import RegisterForm
-from myApp.models import User
+# from myApp.models import User
+from App02.models import User
 
 
 def home(request):
@@ -17,22 +22,22 @@ def home(request):
     return render(request, 'App02/index.html', locals())
 
 
-def login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = User.objects.filter(username=username, password=password).first()
-        print(user.username)
-        if user:
-            response = redirect('/user/')
-            # 设置过期时间
-            future = datetime.now() + timedelta(days=3)
-            # 将cookie写回客户端
-            response.set_cookie('username', username, expires=future)
-            # 设置salt加密存储cookie数据
-            # response.set_signed_cookie()
-            return response
-    return render(request, 'App02/login.html')
+# def login(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+#         user = User.objects.filter(username=username, password=password).first()
+#         print(user.username)
+#         if user:
+#             response = redirect('/user/')
+#             # 设置过期时间
+#             future = datetime.now() + timedelta(days=3)
+#             # 将cookie写回客户端
+#             response.set_cookie('username', username, expires=future)
+#             # 设置salt加密存储cookie数据
+#             # response.set_signed_cookie()
+#             return response
+#     return render(request, 'App02/login.html')
 
 
 def logout(request):
@@ -121,6 +126,8 @@ def register(request):
             data = form.cleaned_data
             print(data, 'create')
             data['password'] = make_password(form.cleaned_data['password'])
+            # 如果forms中表单的字段名和models模型的字段名一致可以如下写
+            # res = User.objects.create(**data)
             User.objects.create(**data)
             ret['msg'] = 'ok'
             return JsonResponse(ret)
@@ -131,3 +138,93 @@ def register(request):
             # ret['msg'] = list(form.errors.items())[0][1][0]
             return JsonResponse(ret)
     return render(request, 'App02/register.html')
+
+
+def register_view(request):
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('username', "")
+            password = request.POST.get('password', "")
+            phone = request.POST.get('phone')
+            email = request.POST.get('email')
+            # 验证用户是否存在
+            user = User.objects.filter(username=username).first()
+            if user:
+                # 用户已存在
+                return HttpResponse("用户已存在")
+            else:
+                # 保存用户
+                User.objects.create_user(username=username,
+                                         password=password,
+                                         phone=phone,
+                                         email=email)
+                return HttpResponse("注册成功")
+        except Exception as e:
+            return HttpResponse('注册失败:' + e)
+    else:
+        return render(request, 'App02/register.html')
+
+
+def index(request):
+    # 在后端判断是否已经登录
+    print(request.user.is_authenticated)
+    print(request.user)
+    return HttpResponse(f"是否登录 {request.user.is_authenticated}")
+
+
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username', "")
+        password = request.POST.get('password', "")
+        # 用户验证，如果用户名和密码正确，返回User对象，否则返回None
+        user = authenticate(request=request, username=username, password=password)
+        print(user)
+        if user:
+            # 记录用户登录状态，参数是请求对象和用户对象
+            # login() 将user写到session中并写到了request
+            login(request=request, user=user)
+            return HttpResponse('登录成功')
+    return render(request, 'App02/login.html')
+
+
+def user_logout(request):
+    # 退出登录
+    logout(request)
+    return HttpResponse('已退出')
+
+
+def update_password(request):
+    username = request.user.username
+    old_password = request.POST.get("oldPassword")
+    new_password = request.POST.get("newPassword")
+    user = auth.authenticate(username=username, password=old_password)
+    if user:
+        user.set_password(new_password)
+        user.save()
+        return HttpResponse("修改成功")
+    else:
+        return HttpResponse("修改失败")
+
+
+def test_time(request):
+    def utc_to_cst(date):
+        from_zone = tz.gettz('UTC')
+        print(from_zone)
+        to_zome = tz.gettz('CST')
+        utc_date = date.replace(tzinfo=from_zone)
+        print(utc_date)
+        cst_date = utc_date.astimezone(to_zome)
+        print(cst_date)
+        UTC_FORMAT = "%Y-%m-%d %H:%M:%S"
+        time = datetime.strptime(str(cst_date)[:19], UTC_FORMAT)
+        print(time)
+
+    user = User.objects.filter(username='test').first()
+    utc_to_cst(user.date_joined)
+    return HttpResponse('xxx')
+
+
+# 路由保护
+@login_required(login_url='/user/login')
+def publish(request):
+    return HttpResponse("操作成功")

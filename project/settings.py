@@ -95,7 +95,7 @@ USE_I18N = True
 
 USE_L10N = True
 # 是否使用国际标准时间，改为False，数据库存储的时间和当前时间一致
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -137,3 +137,6 @@ BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_IMPORTS = ('myApp.task')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# auth
+AUTH_USER_MODEL = 'App02.User'
