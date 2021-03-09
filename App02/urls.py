@@ -19,4 +19,9 @@ urlpatterns = [
 
     # 图形验证码
     path('captcha/', views.captcha, name='captcha'),
+    # 邮箱发送
+    path('sendone/', views.sendone, name='sendone'),
+    path('sendmany/', views.sendmany, name='sendmany'),
+    path('send_html_mail/', views.send_html_mail, name='send_html_mail'),
+    path('custom_send/', views.custom_send, name='custom_send'),
 ]

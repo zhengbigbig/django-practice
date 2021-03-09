@@ -1,18 +1,22 @@
-from datetime import datetime, timedelta
-import hashlib
+from datetime import datetime
 
 from dateutil import tz
+
 from django.contrib import auth
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
+from django.template import loader
+
 from App02.forms import RegisterForm, LoginForm
 # from myApp.models import User
 from App02.models import User
+from myApp.utils import send_email
 
 
 def home(request):
@@ -239,3 +243,37 @@ def captcha(request):
         else:
             return render(request, 'App02/verifycode.html', locals())
     return render(request, 'App02/verifycode.html', locals())
+
+
+# 邮箱
+from django.core.mail import send_mail, send_mass_mail, EmailMultiAlternatives, EmailMessage
+from django.conf import settings
+
+
+# 发送一封邮件
+def sendone(request):
+    send_mail('title', 'content', settings.EMAIL_FROM, ['780357902@qq.com'])
+    return HttpResponse('发送成功')
+
+
+# 发送多封邮件
+def sendmany(request):
+    message1 = ('Subject here', '<b>test message</b>', settings.EMAIL_FROM, ['780357902@qq.com'])
+    message2 = ('Subject here2', '<b>test message</b>', settings.EMAIL_FROM, ['780357902@qq.com'])
+    send_mass_mail((message1, message2), fail_silently=False)
+    return HttpResponse('发送成功')
+
+
+# 渲染模板进行邮箱发送
+def send_html_mail(request):
+    subject, from_email, to = 'html', settings.EMAIL_FROM, '780357902@qq.com'
+    html_content = loader.get_template('App02/active.html').render({'username': 'fk'})
+    msg = EmailMultiAlternatives(subject, from_email=from_email, to=[to])
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
+    return HttpResponse('html发送')
+
+
+def custom_send(request):
+    send_email(['780357902@qq.com'], '<b>test</b>')
+    return HttpResponse('success')

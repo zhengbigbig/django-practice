@@ -155,3 +155,11 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_null',
                            'captcha.helpers.noise_dots')  # 点
 # 随机字符验证码
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
+
+
+# smtp邮箱服务
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = '780357902@qq.com'
+EMAIL_HOST_PASSWORD = '*******'
+EMAIL_FROM = 'zhengbigbig<780357902@qq.com>'
