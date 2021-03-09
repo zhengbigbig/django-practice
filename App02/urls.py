@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from . import views
 
 urlpatterns = [
@@ -16,4 +16,7 @@ urlpatterns = [
     path('test_time/', views.test_time, name='test_time'),
     path('index/', views.index, name='index'),
     path('publish/', views.publish, name='publish'),
+
+    # 图形验证码
+    path('captcha/', views.captcha, name='captcha'),
 ]

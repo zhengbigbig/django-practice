@@ -18,7 +18,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myApp',
-    'App02'
+    'App02',
+    'captcha',
 ]
 # 中间件
 MIDDLEWARE = [
@@ -108,6 +109,9 @@ STATIC_URL = '/static/'
 #     os.path.join(BASE_DIR, 'static')
 # ]
 
+
+# --------------- add ----------------
+
 SESSION_ENGINE = 'redis_sessions.session'
 SESSION_REDIS = {
     'host': 'localhost',
@@ -140,3 +144,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # auth
 AUTH_USER_MODEL = 'App02.User'
+# captcha验证码设置
+CAPTCHA_IMAGE_SIZE = (80, 45)  # 设置图片大小
+CAPTCHA_LENGTH = 4  # 字符个数
+CAPTCHA_TIMEOUT = 1  # 超时(minutes)
+# 输出格式: 输入框 验证码图片 隐藏域
+CAPTCHA_OUTPUT_FORMAT = '%(text_field)s %(image)s %(hidden_field)s'
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_null',
+                           'captcha.helpers.noise_arcs',  # 线
+                           'captcha.helpers.noise_dots')  # 点
+# 随机字符验证码
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'

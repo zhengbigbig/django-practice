@@ -1,3 +1,4 @@
+from captcha.fields import CaptchaField
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -8,6 +9,7 @@ from myApp.models import User
 def validate_username_exist(value):
     if User.objects.filter(username=value).first():
         raise ValidationError('%s 用户名已存在' % value)
+
 
 class RegisterForm(forms.Form):
     username = forms.CharField(required=True, validators=[
@@ -36,3 +38,7 @@ class RegisterForm(forms.Form):
         if password != rePassword:
             raise ValidationError("两次密码输入不一致")
         return self.cleaned_data
+
+
+class LoginForm(forms.Form):
+    captcha = CaptchaField()  # 验证码字段

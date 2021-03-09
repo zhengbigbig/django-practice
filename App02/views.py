@@ -10,7 +10,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
-from App02.forms import RegisterForm
+from App02.forms import RegisterForm, LoginForm
 # from myApp.models import User
 from App02.models import User
 
@@ -228,3 +228,14 @@ def test_time(request):
 @login_required(login_url='/user/login')
 def publish(request):
     return HttpResponse("操作成功")
+
+
+def captcha(request):
+    form = LoginForm()
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            return HttpResponse('验证通过')
+        else:
+            return render(request, 'App02/verifycode.html', locals())
+    return render(request, 'App02/verifycode.html', locals())
