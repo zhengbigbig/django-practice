@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from myApp.models import User, Publisher, Book, Goods, Buyer, Orders
 from myApp.models1 import Student, Archives
-from myApp.utils import CustomPaginator
+from myApp.utils import CustomPaginator, FileUpload
 
 
 def home(request):
@@ -443,3 +443,43 @@ def pagination(request):
     currentPageList = CustomPaginator(allList, pageSize).lst(page)
     print(currentPageList)
     return HttpResponse('success')
+
+
+from django.conf import settings
+import os
+
+
+# def upload(request):
+#     if request.method == 'POST':
+#         file = request.FILES.get('file')
+#         print(file.name, file.size)
+#         upload_path = os.path.join(settings.STATICFILES_DIRS[0],'upload')
+#         if not os.path.exists(upload_path):
+#             os.makedirs(upload_path)
+#         save_path = os.path.join(upload_path, file.name)
+#         print(save_path)
+#         with open(save_path, 'wb') as f:
+#             if file.multiple_chunks():
+#                 for myf in file.chunks():
+#                     f.write(myf)
+#                 print('> 2.5M')
+#             else:
+#                 print('< 2.5')
+#                 f.write(file.read())
+#         return HttpResponse('文件上传')
+#
+#     else:
+#         return render(request, 'myApp/upload.html')
+
+
+def upload(request):
+    if request.method == 'POST':
+        file = request.FILES.get('file')
+        path = settings.MEDIA_ROOT
+        fp = FileUpload(file)
+        tag = fp.upload(path)
+        if tag > 0:
+            return HttpResponse('上传成功')
+        return HttpResponse('上传失败，请检查文件格式和大小')
+    else:
+        return render(request, 'myApp/upload.html')

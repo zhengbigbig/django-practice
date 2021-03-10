@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<form method="post" action="/savefile/" enctype="multipart/form-data">
+<form method="post" action="/upload/" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="file" name="file">
     <input type="submit" value="上传">

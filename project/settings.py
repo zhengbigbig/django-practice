@@ -105,9 +105,9 @@ import os
 
 STATIC_URL = '/static/'
 # 普通文件
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static')
-# ]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 
 
 # --------------- add ----------------
@@ -123,7 +123,7 @@ SESSION_REDIS = {
 }
 
 # 上传文件目录
-MEDIA_ROOT = os.path.join(BASE_DIR, r'static/upfile')
+MEDIA_ROOT = os.path.join(BASE_DIR, r'static/upload')
 
 # 富文本
 TINYMCE_DEFAULT_CONFIG = {
@@ -163,3 +163,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = '780357902@qq.com'
 EMAIL_HOST_PASSWORD = '*******'
 EMAIL_FROM = 'zhengbigbig<780357902@qq.com>'
+
+# 黑名单设置
+BLACKLIST = []

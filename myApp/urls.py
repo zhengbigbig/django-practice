@@ -42,6 +42,7 @@ urlpatterns = [
 
     re_path(r'^testBuyerAndGoods/$', views.testBuyerAndGoods, name='testBuyerAndGoods'),
     re_path(r'^pagination/$', views.pagination, name='pagination'),
-
+    re_path(r'^upload/$', views.upload),
+    # re_path(r'^savefile/$', views.savefile),
 
 ]

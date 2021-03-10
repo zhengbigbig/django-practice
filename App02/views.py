@@ -234,6 +234,10 @@ def publish(request):
     return HttpResponse("操作成功")
 
 
+from captcha.models import CaptchaStore
+from captcha.helpers import captcha_image_url
+
+
 def captcha(request):
     form = LoginForm()
     if request.method == 'POST':
@@ -242,6 +246,10 @@ def captcha(request):
             return HttpResponse('验证通过')
         else:
             return render(request, 'App02/verifycode.html', locals())
+    if request.is_ajax():
+        new_key = CaptchaStore.pick()
+        image_url = captcha_image_url(new_key)
+        print(image_url)
     return render(request, 'App02/verifycode.html', locals())
 
 
