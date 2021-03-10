@@ -187,7 +187,7 @@ def user_login(request):
             # 记录用户登录状态，参数是请求对象和用户对象
             # login() 将user写到session中并写到了request
             login(request=request, user=user)
-            return HttpResponse('登录成功')
+            return redirect('/')
     return render(request, 'App02/login.html')
 
 
