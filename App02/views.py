@@ -182,7 +182,7 @@ def user_login(request):
         password = request.POST.get('password', "")
         # 用户验证，如果用户名和密码正确，返回User对象，否则返回None
         user = authenticate(request=request, username=username, password=password)
-        print(user)
+        print(user,222)
         if user:
             # 记录用户登录状态，参数是请求对象和用户对象
             # login() 将user写到session中并写到了request

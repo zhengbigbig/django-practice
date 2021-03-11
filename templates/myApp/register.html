@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="{% url 'myApp:check_user' %}" method="post">
+    {% csrf_token %}
+    用户名：<input type="text" name="username">
+    密码：<input type="password" name="password">
+    确认密码：<input type="rePassword" name="rePassword">
+    邮箱：<input type="text" name="email">
+
+    <input type="submit" value="注册"/>
+</form>
+</body>
+</html>

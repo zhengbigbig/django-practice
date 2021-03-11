@@ -7,7 +7,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('index/', views.index, name='index'),
     # string
-    path('change/<name>/',views.change_name,name='change'),
+    path('change/<name>/', views.change_name, name='change'),
     # int
     path('show/<int:age>/', views.show, name='show'),
     # slug
@@ -47,5 +47,8 @@ urlpatterns = [
 
     # re_path(r'^cache/$', views.cache),
     re_path(r'^cache_data/$', views.cache_data),
+
+    re_path(r'^check_user/$', views.check_user, name='check_user'),
+    path('active/<token>/', views.active_user, name='active'),
 
 ]

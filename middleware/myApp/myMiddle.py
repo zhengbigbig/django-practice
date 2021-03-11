@@ -22,10 +22,10 @@ class MyMiddle(MiddlewareMixin):
         if request.META['REMOTE_ADDR'] in BLACKLIST:
             return HttpResponse('本站拒绝访问')
         # 登录判断
-        path = request.path
-        print(request.user, path)
-        if not request.user.is_authenticated and path != '/user/user_login/':
-            return redirect(reverse("App02:user_login"))
+        # path = request.path
+        # print(request.user, path)
+        # if not request.user.is_authenticated and path != '/user/user_login/':
+        #     return redirect(reverse("App02:user_login"))
 
     # 统一返回json数据
     def process_response(self, request, response):

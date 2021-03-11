@@ -5,15 +5,18 @@ from datetime import datetime
 from django.core import serializers
 # Create your views here.
 from django.core.cache import cache
+from django.core.mail import send_mail
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from App02.models import User
+from myApp.email_token import token_confirm
 from myApp.models import Publisher, Book, Goods, Buyer
 from myApp.models1 import Student, Archives
 from myApp.utils import CustomPaginator, FileUpload
+from project.settings import EMAIL_FROM
 
 
 def home(request):
@@ -499,3 +502,54 @@ def cache_data(request):
     return HttpResponse(serialize('json', users))
 
 
+# 邮箱验证
+
+def check_user(request):
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('username', "")
+            password = request.POST.get('password', "")
+            phone = request.POST.get('phone')
+            email = request.POST.get('email')
+            # 验证用户是否存在
+            user = User.objects.filter(username=username).first()
+            if user:
+                if not user.is_active:
+                    return HttpResponse('请先激活')
+                # 用户已存在
+                return HttpResponse("用户已存在")
+            else:
+                # 保存用户
+                User.objects.create_user(username=username,
+                                                password=password,
+                                                phone=phone,
+                                                email=email,is_active = 0)
+                # 发送邮件验证
+                token = token_confirm.generate_validate_token(username)
+                link = reverse("myApp:active", kwargs={'token': token})
+                link = 'http://' + request.get_host() + link
+                print(link)
+                html = loader.get_template('myApp/active.html').render({'link': link})
+                send_mail('账户激活', '', EMAIL_FROM, [email], html_message=html)
+                return HttpResponse("请登录到注册邮箱中验证用户，有效期1小时")
+        except Exception as e:
+            return HttpResponse('注册失败:' + e)
+
+    return render(request, 'myApp/register.html')
+
+
+def active_user(request,token):
+    try:
+        username = token_confirm.confirm_validate_token(token)
+    except:
+        username = token_confirm.remove_validate_token(token)
+        users = User.objects.filter(username = username)
+        users.delete()
+        return HttpResponse('验证链接已经过期，请重新注册')
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return HttpResponse('验证用户不存在，请先注册')
+    user.is_active = True
+    user.save()
+    return  HttpResponse('验证通过，请先登录')
