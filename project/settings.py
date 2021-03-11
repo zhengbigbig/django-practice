@@ -23,6 +23,7 @@ INSTALLED_APPS = [
 ]
 # 中间件
 MIDDLEWARE = [
+    # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -32,6 +33,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'middleware.myApp.myMiddle.MyMiddle',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 # 根路由
 ROOT_URLCONF = 'project.urls'
@@ -109,7 +111,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-
 # --------------- add ----------------
 
 SESSION_ENGINE = 'redis_sessions.session'
@@ -156,13 +157,42 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_null',
 # 随机字符验证码
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 
-
 # smtp邮箱服务
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = '780357902@qq.com'
-EMAIL_HOST_PASSWORD = '*******'
+EMAIL_HOST_PASSWORD = ''
 EMAIL_FROM = 'zhengbigbig<780357902@qq.com>'
 
 # 黑名单设置
 BLACKLIST = []
+
+# 数据库缓存配置
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+#         'LOCATION': 'my_chache_table',
+#     }
+# }
+# CACHE_MIDDLEWARE_SECONDS = 20  # 设置超时时间 20秒
+# 文件缓存
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',  # 指定缓存使用的引擎
+#         'LOCATION': '/var/tmp/django_cache',  # 指定缓存路径
+#         'TIMEOUT': 300,  # 缓存超时时间（默认300秒，None表示永不过期
+#         'OPTIONS': {
+#             'MAX_ENTRIES': 300,  # 最大缓存记录的数量（默认300）
+#             'CULL_FREQUENCY': 3,  # 缓存到达最大个数之后，剔除缓存个数的比例，即： 1，默认3
+#         }
+#     }
+# }
+# redis缓存
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        # 'LOCATION':'redis://:password@127.0.0.1:6379/1', # 缓存地址，@前面是redis密码，若无则空
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+
+    }
+}

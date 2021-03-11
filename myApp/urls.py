@@ -45,4 +45,7 @@ urlpatterns = [
     re_path(r'^upload/$', views.upload),
     # re_path(r'^savefile/$', views.savefile),
 
+    # re_path(r'^cache/$', views.cache),
+    re_path(r'^cache_data/$', views.cache_data),
+
 ]

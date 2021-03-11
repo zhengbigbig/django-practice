@@ -1,17 +1,17 @@
-import os
+import json
 import random
 from datetime import datetime
 
 from django.core import serializers
-from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
-
 # Create your views here.
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.core.cache import cache
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from myApp.models import User, Publisher, Book, Goods, Buyer, Orders
+from App02.models import User
+from myApp.models import Publisher, Book, Goods, Buyer
 from myApp.models1 import Student, Archives
 from myApp.utils import CustomPaginator, FileUpload
 
@@ -96,9 +96,6 @@ def handle(req, data):
     return render(request, 'myApp/index.html', {'data': data})
 
 
-import json
-
-
 def handle2(req):
     # 直接返回字典
     # return JsonResponse({'name': 'xxx'})
@@ -152,9 +149,6 @@ def handleAjax(request):
     if request.is_ajax():
         return JsonResponse({"code": 0, "msg": 'success'})
     return render(request, 'myApp/ajax.html')
-
-
-from hashlib import md5
 
 
 def handle_data(request):
@@ -244,7 +238,7 @@ def not_filter(request):
     return HttpResponse('query')
 
 
-from django.db.models import Max, Min, Sum, Avg, Count, Q, F
+from django.db.models import Max, Min, Count, Q, F
 
 
 def count_statics(request):
@@ -446,7 +440,6 @@ def pagination(request):
 
 
 from django.conf import settings
-import os
 
 
 # def upload(request):
@@ -483,3 +476,26 @@ def upload(request):
         return HttpResponse('上传失败，请检查文件格式和大小')
     else:
         return render(request, 'myApp/upload.html')
+
+
+from django.views.decorators.cache import cache_page
+
+# @cache_page(5)
+# def cache(request):
+#     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+#     print(current_time)
+#     return render(request, 'myApp/cache.html', locals())
+from django.core.serializers import serialize
+
+
+def cache_data(request):
+    # 首先判断数据是否在缓存中，如果在直接获取
+    users = cache.get('all_users')
+    print(users, '缓存')
+    # 如果不在缓存，查询数据库，将结果写入缓存
+    if not users:
+        users = User.objects.all()
+        cache.set('all_users', users)
+    return HttpResponse(serialize('json', users))
+
+

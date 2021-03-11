@@ -29,7 +29,6 @@ class MyMiddle(MiddlewareMixin):
 
     # 统一返回json数据
     def process_response(self, request, response):
-        print("response")
         # 类型判断
         if isinstance(response, (dict, list)):
             result = json.dumps(response)
