@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = '=ij=9js^@-k)0bw!sd53zh8aeg$vm*46t#18bw0i+8fp2j+qux'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -151,13 +151,6 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_null',
 # 随机字符验证码
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 
-# smtp邮箱服务
-EMAIL_HOST = 'smtp.qq.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = '780357902@qq.com'
-EMAIL_HOST_PASSWORD = 'ezjmbexhlixabcfg'
-EMAIL_FROM = 'zhengbigbig<780357902@qq.com>'
-
 # 黑名单设置
 BLACKLIST = []
 
@@ -210,7 +203,7 @@ CELERY_ACCEPT_CONTENT = ['json']  # 分布式接受数据的类型为json
 CELERY_TIMEZONE = 'Asia/Shanghai'
 CELERY_ENABLE_UTC = True
 
-CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24 # 后端存储任务超过一天，则自动清理数据，单位为秒
+CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24  # 后端存储任务超过一天，则自动清理数据，单位为秒
 CELERY_MAX_TASKS_PER_CHILD = 1000  # 每个worker执行了多少任务就会死掉，防止内存泄露
 # 定时任务
 CELERYBEAT_SCHEDULE = {
@@ -228,6 +221,74 @@ CELERYBEAT_SCHEDULE = {
 #         'schedule': crontab(minute='01',hour='15'),
 #         'args': (2,)
 #
+#     }
+# }
+
+# smtp邮箱服务
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = '780357902@qq.com'
+EMAIL_HOST_PASSWORD = 'ezjmbexhlixabcfg'
+EMAIL_FROM = 'zhengbigbig<780357902@qq.com>'
+# 日志配置
+# ADMINS = (('ZBB', '780357902@qq.com'),)
+# 配置邮件
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# SERVER_EMAIL = EMAIL_HOST_USER
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': True,
+#     'formatters': {
+#         'standard': {
+#             'format': '%(asctime)s [%(threadName)s:%(thread)d] [%(name)s:%(lineno)d] [%(module)s:%(funcName)s] [%(levelname)s]- %(message)s',
+#         }
+#     },
+#     'filters': {  # 过滤条件
+#         # 要求debug是False才记录
+#         'require_debug_false': {
+#             '()': 'django.utils.log.RequireDebugFalse',
+#         },
+#     },
+#     'handlers': {
+#         'null': {
+#             'level': 'DEBUG',
+#             'class': 'logging.NullHandler',
+#         },
+#         'mail_admins': {  # 一旦线上代码报错，邮件提示
+#             'level': 'ERROR',
+#             'class': 'django.utils.log.AdminEmailHandler',
+#             'filters': ['require_debug_false'],
+#         },
+#         'debug': {
+#             'level': 'DEBUG',
+#             'class': 'logging.handlers.RotatingFileHandler',
+#             'filename': os.path.join(BASE_DIR, 'log', 'debug.log'),  # 文件存储位置
+#             'maxBytes': 1024 * 1024 * 5,  # 5M数据
+#             'backupCount': 5,  # 允许5个这样的文件
+#             'formatter': 'standard',  # 格式
+#         },
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'standard',
+#         }
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#         'django.request': {
+#             'handlers': ['debug', 'mail_admins'],
+#             'level': 'ERROR',
+#             'propagate': True,  # 是否继承父类的log信息
+#         },
+#         # 对于不在 ALLOWED_HOSTS 中的请求不发送报错邮件
+#         'django.security.DisallowedHost': {
+#             'handlers': ['null'],
+#             'propagate': False,
+#         }
 #     }
 # }
 

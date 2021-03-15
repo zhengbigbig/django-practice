@@ -52,5 +52,8 @@ urlpatterns = [
     path('active/<token>/', views.active_user, name='active'),
 
     # celery测试
-    path('task/' ,views.exec_tasks)
+    path('task/' ,views.exec_tasks),
+
+    # 日志测试
+    path('log/',views.handle_log,name='log')
 ]

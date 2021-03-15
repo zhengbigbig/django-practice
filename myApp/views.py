@@ -563,3 +563,8 @@ def exec_tasks(request):
     # })
     sum_even.delay(5)
     return HttpResponse("celery")
+
+
+def handle_log(request):
+    print(1 / 0)
+    return HttpResponse('日志')
