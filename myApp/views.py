@@ -521,9 +521,9 @@ def check_user(request):
             else:
                 # 保存用户
                 User.objects.create_user(username=username,
-                                                password=password,
-                                                phone=phone,
-                                                email=email,is_active = 0)
+                                         password=password,
+                                         phone=phone,
+                                         email=email, is_active=0)
                 # 发送邮件验证
                 token = token_confirm.generate_validate_token(username)
                 link = reverse("myApp:active", kwargs={'token': token})
@@ -538,12 +538,12 @@ def check_user(request):
     return render(request, 'myApp/register.html')
 
 
-def active_user(request,token):
+def active_user(request, token):
     try:
         username = token_confirm.confirm_validate_token(token)
     except:
         username = token_confirm.remove_validate_token(token)
-        users = User.objects.filter(username = username)
+        users = User.objects.filter(username=username)
         users.delete()
         return HttpResponse('验证链接已经过期，请重新注册')
     try:
@@ -552,4 +552,14 @@ def active_user(request,token):
         return HttpResponse('验证用户不存在，请先注册')
     user.is_active = True
     user.save()
-    return  HttpResponse('验证通过，请先登录')
+    return HttpResponse('验证通过，请先登录')
+
+
+def exec_tasks(request):
+    from myApp.tasks import hello_celery, mail_send, sum_even
+    # hello_celery.delay(4)  # 把任务添加到任务队列
+    # mail_send.delay({
+    #     'subject': 'subject', 'message': 'message', 'recipient_list': ['780357902@qq.com']
+    # })
+    sum_even.delay(5)
+    return HttpResponse("celery")

@@ -51,4 +51,6 @@ urlpatterns = [
     re_path(r'^check_user/$', views.check_user, name='check_user'),
     path('active/<token>/', views.active_user, name='active'),
 
+    # celery测试
+    path('task/' ,views.exec_tasks)
 ]

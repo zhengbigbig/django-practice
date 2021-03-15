@@ -1,4 +1,7 @@
+from datetime import timedelta
 from pathlib import Path
+
+from celery.schedules import crontab
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -134,15 +137,6 @@ TINYMCE_DEFAULT_CONFIG = {
     'height': '400'
 }
 
-# celery
-import djcelery
-
-djcelery.setup_loader()  # 初始化
-BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_IMPORTS = ('myApp.task')
-
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-
 # auth
 AUTH_USER_MODEL = 'App02.User'
 # captcha验证码设置
@@ -161,7 +155,7 @@ CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = '780357902@qq.com'
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PASSWORD = 'ezjmbexhlixabcfg'
 EMAIL_FROM = 'zhengbigbig<780357902@qq.com>'
 
 # 黑名单设置
@@ -196,3 +190,44 @@ CACHES = {
 
     }
 }
+
+# celery
+from kombu import Queue, Exchange
+
+# 设置Broker和backend
+BROKER_URL = 'redis://127.0.0.1:6379/0'
+# 将数据存放到redis1数据库，redis默认有16个数据库
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/1'
+# CELERY_RESULT_BACKEND = 'django-db'
+INSTALLED_APPS += [
+    'celery',
+    'django_celery_results',
+]
+
+CELERY_TASK_SERIALIZER = 'json'  # 任务序列化和反序列化使用json
+CELERY_RESULT_SERIALIZER = 'json'  # 结果反序列化为json
+CELERY_ACCEPT_CONTENT = ['json']  # 分布式接受数据的类型为json
+CELERY_TIMEZONE = 'Asia/Shanghai'
+CELERY_ENABLE_UTC = True
+
+CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24 # 后端存储任务超过一天，则自动清理数据，单位为秒
+CELERY_MAX_TASKS_PER_CHILD = 1000  # 每个worker执行了多少任务就会死掉，防止内存泄露
+# 定时任务
+CELERYBEAT_SCHEDULE = {
+    'schedule-test': {
+        'task': 'myApp.tasks.hello_celery',
+        'schedule': timedelta(seconds=3),
+        'args': (6,)
+
+    }
+}
+# # 计划任务
+# CELERYBEAT_SCHEDULE = {
+#     'every-ten-second-run-my-task': {
+#         'task': 'app名字.tasks.hello_celery',
+#         'schedule': crontab(minute='01',hour='15'),
+#         'args': (2,)
+#
+#     }
+# }
+
