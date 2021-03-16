@@ -52,8 +52,16 @@ urlpatterns = [
     path('active/<token>/', views.active_user, name='active'),
 
     # celery测试
-    path('task/' ,views.exec_tasks),
+    path('task/', views.exec_tasks),
 
     # 日志测试
-    path('log/',views.handle_log,name='log')
+    path('log/', views.handle_log, name='log'),
+
+    # cbv
+    path('register/', views.RegisterView.as_view(), name='register'),
+    # template
+    path('template/', views.TemplateView.as_view(template_name='hello.html'), name='template'),
+    path('list_user/', views.UserListView.as_view(), name='list_user'),
+    # 创建用户
+    path('create/', views.CreateUserView.as_view(), name='create'),
 ]

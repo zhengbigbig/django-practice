@@ -13,3 +13,4 @@ logger.info('Start print log')
 logger.debug('Do something')
 logger.warning('Something maybe fail.')
 logger.info('Finish')
+

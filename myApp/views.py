@@ -9,6 +9,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from App02.models import User
@@ -568,3 +569,83 @@ def exec_tasks(request):
 def handle_log(request):
     print(1 / 0)
     return HttpResponse('日志')
+
+
+from django.views.generic import View, TemplateView, ListView, CreateView
+
+
+class RegisterView(View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse("get")
+
+    def post(self, request, *args, **kwargs):
+        return HttpResponse('post')
+
+    def put(self, request, *args, **kwargs):
+        return HttpResponse('put')
+
+    def delete(self, request, *args, **kwargs):
+        return HttpResponse('delete')
+
+
+class TemplateView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        context['name'] = args[0]
+        return self.render_to_response(context)
+
+
+class UserListView(ListView):
+    template_name = 'list.html'
+    # 分页，每页个数
+    paginate_by = 5
+    # 排序
+    ordering = ('username', '-age')
+
+    # queryset = User.objects.all()
+    # 获取查询数据
+    def get_queryset(self):
+        data = User.objects.filter(pk__gt=20)
+        ordering = self.get_ordering()
+        if ordering:
+            if isinstance(ordering, str):
+                ordering = (ordering,)
+            data = data.order_by(*ordering)
+
+        return data
+
+
+class CreateUserView(CreateView):
+    # template_name = 'register.html'
+    # model = User
+    # # 字段列表，用于创建用户时设定用户属性
+    # fields = ['username','password']
+    # success_url = '/' # 创建成功后跳转的页面
+    def get(self, request, *args, **kwargs):
+        return render(request, 'register.html')
+
+    def post(self, request, *args, **kwargs):
+        data = request.POST.dict()
+        data.pop('csrfmiddlewaretoken')
+        User.objects.create(**data)
+        return redirect('/')
+
+
+def my_decorator(func):
+    def wrapper(request, *args, **kwargs):
+        print('自定义装饰器被调用了')
+        print('请求路径%s' % request.path)
+        return func(request, *args, **kwargs)
+
+    return wrapper
+
+
+@method_decorator(my_decorator, name='dispatch')
+class DemoView(View):
+    def get(self, request):
+        print('get')
+        return HttpResponse('ok')
+
+    def post(self, request):
+        return HttpResponse('ok')
