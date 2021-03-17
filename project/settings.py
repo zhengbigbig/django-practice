@@ -23,6 +23,8 @@ INSTALLED_APPS = [
     'myApp',
     'App02',
     'captcha',
+    'rest_framework',
+    'drf',
 ]
 # 中间件
 MIDDLEWARE = [

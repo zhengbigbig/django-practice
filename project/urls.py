@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include(('myApp.urls', 'myApp'), namespace="myApp")),
     path('user/', include(('App02.urls', 'App02'), namespace="App02")),
     path('captcha/', include('captcha.urls')),
+    path('drf/', include(('drf.urls', 'drf'), namespace='drf')),
 ]
