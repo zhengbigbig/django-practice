@@ -4,6 +4,7 @@ from django.db import models
 # Create your models here.
 
 class Bookinfo(models.Model):
+    bid = models.AutoField(primary_key=True, db_column='id')
     btitle = models.CharField(max_length=200)
     bpub_date = models.DateField(blank=True, null=True)
     bread = models.IntegerField()
@@ -26,7 +27,20 @@ class Bookinfo(models.Model):
 class Heroinfo(models.Model):
     hid = models.AutoField(primary_key=True)
     hname = models.CharField(max_length=50)
-    bid = models.ForeignKey(Bookinfo, models.DO_NOTHING, db_column='bid', blank=True, null=True)
+    bid = models.ForeignKey(Bookinfo, db_column='bid', blank=True, null=True, on_delete=models.CASCADE,
+                            related_name='heros')
+
+    def __str__(self):
+        return self.hname
 
     class Meta:
         db_table = 'heroinfo'
+
+
+class User(models.Model):
+    username = models.CharField(max_length=30)
+    password_hash = models.CharField(max_length=20, db_column='password')
+    age = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = 'user_drf'

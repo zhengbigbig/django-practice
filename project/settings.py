@@ -111,10 +111,11 @@ USE_TZ = False
 import os
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, 'static'))
 # 普通文件
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static')
+# ]
 
 # --------------- add ----------------
 
@@ -294,3 +295,14 @@ EMAIL_FROM = 'zhengbigbig<780357902@qq.com>'
 #     }
 # }
 
+# rest
+REST_FRAMEWORK = {
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     # 'rest_framework.permissions.IsAdminUser',
+    #     ,
+    # ],
+	'DEFAULT_PARSER_CLASSES':(
+    	'rest_framework.parsers.JSONParser',
+    ),
+    'PAGE_SIZE': 10
+}
