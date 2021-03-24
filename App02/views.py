@@ -12,6 +12,7 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.template import loader
+from rest_framework.generics import DestroyAPIView
 
 from App02.forms import RegisterForm, LoginForm
 # from myApp.models import User
@@ -285,3 +286,6 @@ def send_html_mail(request):
 def custom_send(request):
     send_email(['780357902@qq.com'], '<b>test</b>')
     return HttpResponse('success')
+
+class custom(DestroyAPIView):
+    pass
