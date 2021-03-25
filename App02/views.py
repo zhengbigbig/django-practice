@@ -18,7 +18,9 @@ from rest_framework.response import Response
 from App02.forms import RegisterForm, LoginForm
 # from myApp.models import User
 from App02.models import User
+from drf.authentications import MyAuthentication
 from drf.serializers import UserSerializer
+from myApp.email_token import token_confirm
 from myApp.utils import send_email
 
 
@@ -294,7 +296,7 @@ class UserInfoView(GenericAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'pk'
-
+    authentication_classes = (MyAuthentication,)
     def get(self, request, pk):
         obj = self.get_object()
         us = UserSerializer(instance=obj)
@@ -312,3 +314,16 @@ class UserQueryView(GenericAPIView):
         print(data)
         us = UserSerializer(instance=data, many=True)
         return Response(us.data)
+
+
+class UserToken(GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def get(self, request):
+        # 产生token
+        user = User.objects.first()
+        # 使用用户id生成token
+        token = token_confirm.generate_validate_token(user.id)
+        # 把token返回给客户端
+        return Response({'token': token})

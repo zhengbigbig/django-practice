@@ -304,5 +304,9 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PARSER_CLASSES': (
     #     'rest_framework.parsers.JSONParser',
     # ),
+    # 'DEFAULT_AUTHENTICATION_CLASSES':(
+    #   # 应用名.模块名.认证类名
+    #   'drf.authentications.MyAuthentication'
+    # ),
     'PAGE_SIZE': 10
 }
