@@ -12,11 +12,13 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.template import loader
-from rest_framework.generics import DestroyAPIView
+from rest_framework.generics import DestroyAPIView, GenericAPIView
+from rest_framework.response import Response
 
 from App02.forms import RegisterForm, LoginForm
 # from myApp.models import User
 from App02.models import User
+from drf.serializers import UserSerializer
 from myApp.utils import send_email
 
 
@@ -183,7 +185,7 @@ def user_login(request):
         password = request.POST.get('password', "")
         # 用户验证，如果用户名和密码正确，返回User对象，否则返回None
         user = authenticate(request=request, username=username, password=password)
-        print(user,222)
+        print(user, 222)
         if user:
             # 记录用户登录状态，参数是请求对象和用户对象
             # login() 将user写到session中并写到了request
@@ -287,5 +289,26 @@ def custom_send(request):
     send_email(['780357902@qq.com'], '<b>test</b>')
     return HttpResponse('success')
 
-class custom(DestroyAPIView):
-    pass
+
+class UserInfoView(GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'pk'
+
+    def get(self, request, pk):
+        obj = self.get_object()
+        us = UserSerializer(instance=obj)
+        return Response(us.data)
+
+
+class UserQueryView(GenericAPIView):
+    # 查询结果集
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def get(self, request, name):
+        data = self.get_queryset()
+        data = data.filter(username=name)
+        print(data)
+        us = UserSerializer(instance=data, many=True)
+        return Response(us.data)
