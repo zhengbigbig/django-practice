@@ -297,10 +297,11 @@ EMAIL_FROM = 'zhengbigbig<780357902@qq.com>'
 
 # rest
 REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     # 'rest_framework.permissions.IsAdminUser',
-    #     ,
-    # ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+        'drf.permission.SuperPermission',
+        'drf.permission.StaffPermission'
+    ],
     # 'DEFAULT_PARSER_CLASSES': (
     #     'rest_framework.parsers.JSONParser',
     # ),

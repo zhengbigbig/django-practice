@@ -12,13 +12,14 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.template import loader
-from rest_framework.generics import DestroyAPIView, GenericAPIView
+from rest_framework.generics import DestroyAPIView, GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
 from App02.forms import RegisterForm, LoginForm
 # from myApp.models import User
 from App02.models import User
 from drf.authentications import MyAuthentication
+from drf.permission import StaffPermission, SuperPermission
 from drf.serializers import UserSerializer
 from myApp.email_token import token_confirm
 from myApp.utils import send_email
@@ -297,6 +298,7 @@ class UserInfoView(GenericAPIView):
     serializer_class = UserSerializer
     lookup_field = 'pk'
     authentication_classes = (MyAuthentication,)
+
     def get(self, request, pk):
         obj = self.get_object()
         us = UserSerializer(instance=obj)
@@ -327,3 +329,27 @@ class UserToken(GenericAPIView):
         token = token_confirm.generate_validate_token(user.id)
         # 把token返回给客户端
         return Response({'token': token})
+
+
+class UsersAPI(ListAPIView):
+    queryset = User.objects.all()
+    # 指定使用的序列化器
+    serializer_class = UserSerializer
+    authentication_classes = (MyAuthentication,)
+    # 权限控制
+    permission_classes = (SuperPermission, StaffPermission)
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        if not isinstance(user, User):
+            return Response({
+                "code": 1,
+                "msg": '用户名或密码错误'
+            })
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
