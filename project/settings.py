@@ -297,11 +297,11 @@ EMAIL_FROM = 'zhengbigbig<780357902@qq.com>'
 
 # rest
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser',
-        'drf.permission.SuperPermission',
-        'drf.permission.StaffPermission'
-    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAdminUser',
+    #     'drf.permission.SuperPermission',
+    #     'drf.permission.StaffPermission'
+    # ],
     # 'DEFAULT_PARSER_CLASSES': (
     #     'rest_framework.parsers.JSONParser',
     # ),
@@ -309,5 +309,10 @@ REST_FRAMEWORK = {
     #   # 应用名.模块名.认证类名
     #   'drf.authentications.MyAuthentication'
     # ),
-    'PAGE_SIZE': 10
+    # 'PAGE_SIZE': 10,
+    'DEFAULT_THROTTLE_CLASSES':{
+        'vistor': '3/m',
+        'anon': '10/dav', # 匿名用户
+    },
+    'DEFAULT_THROTTLE_CLASSES': ['drf.mythrottle.VisitThrottle']
 }
