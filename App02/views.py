@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import datetime
 
 from dateutil import tz
@@ -12,15 +13,17 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.template import loader
-from rest_framework.generics import DestroyAPIView, GenericAPIView, ListAPIView
+from rest_framework.generics import DestroyAPIView, GenericAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from App02.forms import RegisterForm, LoginForm
 # from myApp.models import User
 from App02.models import User
 from drf.authentications import MyAuthentication
+from drf.models import Bookinfo
 from drf.permission import StaffPermission, SuperPermission
-from drf.serializers import UserSerializer
+from drf.serializers import UserSerializer, BookInfoSerializer
 from myApp.email_token import token_confirm
 from myApp.utils import send_email
 
@@ -353,3 +356,39 @@ class UsersAPI(ListAPIView):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+class LargeResultSetPagination(PageNumberPagination):
+    page_size = 1000
+    page_size_query_param = 'page_size'
+    max_page_size = 10000
+    # 重写返回结果
+    def get_paginated_response(self, data):
+        return Response(OrderedDict([
+            ('count', self.page.paginator.count),
+            ('results', data)
+        ]))
+
+class BookDetailView(RetrieveAPIView):
+    queryset = Bookinfo.objects.all()
+    serializer_class = BookInfoSerializer
+    pagination_class = LargeResultSetPagination
+
+class BookListView(GenericAPIView):
+    queryset = Bookinfo
+    serializer_class = BookInfoSerializer
+    pagination_class = PageNumberPagination
+
+    def get(self,request,*args,**kwargs):
+        # 过滤结果集
+        queryset = self.filter_queryset(self.get_queryset())
+        # 获取分页对象
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(list(page),many=True)
+            return Response(OrderedDict([
+                ('count',page.paginator.count),
+                ('results',serializer.data),
+            ]))
+        serializer = self.get_serializer(queryset,many=True)
+        return Response(serializer.data)
+

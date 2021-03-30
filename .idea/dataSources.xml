@@ -7,5 +7,17 @@
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost:3306</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="yuntai@192.168.1.189" uuid="9bca10ec-9c56-471c-8d95-2f789235939a">
+      <driver-ref>mariadb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mariadb://192.168.1.189:33060/yuntai</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="yuntai@192.168.5.120" uuid="7ed49d38-37fb-47a6-8aea-67fd4205402c">
+      <driver-ref>mariadb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mariadb://192.168.5.120:33060/yuntai</jdbc-url>
+    </data-source>
   </component>
 </project>

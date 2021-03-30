@@ -310,9 +310,11 @@ REST_FRAMEWORK = {
     #   'drf.authentications.MyAuthentication'
     # ),
     # 'PAGE_SIZE': 10,
-    'DEFAULT_THROTTLE_CLASSES':{
-        'vistor': '3/m',
-        'anon': '10/dav', # 匿名用户
-    },
-    'DEFAULT_THROTTLE_CLASSES': ['drf.mythrottle.VisitThrottle']
+    # 'DEFAULT_THROTTLE_CLASSES':{
+    #     'vistor': '3/m',
+    #     'anon': '10/dav', # 匿名用户
+    # },
+    # 'DEFAULT_THROTTLE_CLASSES': ['drf.mythrottle.VisitThrottle'],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,  # 每页数目
 }
