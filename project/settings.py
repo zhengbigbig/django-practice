@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'captcha',
     'rest_framework',
     'drf',
+    'django_filters',
 ]
 # 中间件
 MIDDLEWARE = [
@@ -317,4 +318,5 @@ REST_FRAMEWORK = {
     # 'DEFAULT_THROTTLE_CLASSES': ['drf.mythrottle.VisitThrottle'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,  # 每页数目
+    'DEFAULT_FILTER_BACKENDS':('django_filters.rest_framework.DjangoFilterBackend')
 }
