@@ -7,7 +7,7 @@ class Bookinfo(models.Model):
     bid = models.AutoField(primary_key=True, db_column='id')
     btitle = models.CharField(max_length=200)
     bpub_date = models.DateField(blank=True, null=True)
-    bread = models.IntegerField()
+    bread = models.IntegerField(verbose_name='阅读量',help_text='阅读量')
     bcomment = models.IntegerField()
     bimage = models.CharField(max_length=200, blank=True, null=True)
 

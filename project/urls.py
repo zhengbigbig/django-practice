@@ -17,13 +17,15 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.static import serve
+from rest_framework.documentation import include_docs_urls
 
 urlpatterns = [
-                  path('admin/', admin.site.urls),
-                  path('', include(('myApp.urls', 'myApp'), namespace="myApp")),
-                  path('user/', include(('App02.urls', 'App02'), namespace="App02")),
-                  path('captcha/', include('captcha.urls')),
-                  path('drf/', include(('drf.urls', 'drf'), namespace='drf')),
-                  re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}, name='static'),
+    path('admin/', admin.site.urls),
+    path('', include(('myApp.urls', 'myApp'), namespace="myApp")),
+    path('user/', include(('App02.urls', 'App02'), namespace="App02")),
+    path('captcha/', include('captcha.urls')),
+    path('drf/', include(('drf.urls', 'drf'), namespace='drf')),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}, name='static'),
+    path('docs/', include_docs_urls(title='My API title'))
 
-              ]
+]

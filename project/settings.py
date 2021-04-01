@@ -316,7 +316,8 @@ REST_FRAMEWORK = {
     #     'anon': '10/dav', # 匿名用户
     # },
     # 'DEFAULT_THROTTLE_CLASSES': ['drf.mythrottle.VisitThrottle'],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,  # 每页数目
-    'DEFAULT_FILTER_BACKENDS':('django_filters.rest_framework.DjangoFilterBackend')
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 10,  # 每页数目
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }

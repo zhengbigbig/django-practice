@@ -17,12 +17,12 @@ from drf.serializers import UserSerializer, BookInfoSerializer
 
 
 class BooksView(View):
+
     def queryset_to_list(self, queryset):
         res = []
         for obj in queryset:
             res.append(obj.to_dict())
         return res
-
     def get(self, request, *args, **kwargs):
         books = Bookinfo.objects.all()
         return JsonResponse(self.queryset_to_list(books), safe=False)
@@ -62,6 +62,13 @@ class ExampleView(APIView):
 
 
 class BookInfoView(GenericAPIView):
+    """
+    get:
+    获取所有图书
+
+    post:
+    创建图书
+    """
     queryset = Bookinfo.objects.all()
     serializer_class = BookInfoSerializer
 

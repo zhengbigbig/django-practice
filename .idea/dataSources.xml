@@ -25,5 +25,11 @@
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mariadb://192.168.161.185:33060/yuntai</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="yuntai@192.168.0.166" uuid="2ae2845e-40fc-4b3a-8846-1f973d1be67e">
+      <driver-ref>mariadb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mariadb://192.168.0.166:33060/yuntai</jdbc-url>
+    </data-source>
   </component>
 </project>
